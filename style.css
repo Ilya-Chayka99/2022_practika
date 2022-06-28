@@ -16,7 +16,7 @@
     max-height: 100%;
 }
 
-#player
+#player,#layer1,#layer2,#layer3,#layer4,#layer5,#Enemy_fly,#Enemy_plant,#Enemy_spider
 {
     display: none;
 }
