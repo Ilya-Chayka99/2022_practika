@@ -174,14 +174,14 @@ window.addEventListener('load',function (){
             this.game=game
             this.keys=[]
             window.addEventListener('keydown',e=>{
-                if((e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Control' || e.key==='w') && this.keys.indexOf(e.key) === -1)
+                if((e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Control' || e.key==='w' || e.key==='ц') && this.keys.indexOf(e.key) === -1)
                 {
                     this.keys.push(e.key)
                 }else if(e.key==='d') this.game.debug=!this.game.debug
             })
 
             window.addEventListener('keyup',e=>{
-                if(e.key === 'ArrowDown' || e.key === 'ArrowUp'  || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Control' || e.key === 'w')
+                if(e.key === 'ArrowDown' || e.key === 'ArrowUp'  || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Control' || e.key === 'w' || e.key==='ц')
                 {
                     this.keys.splice(this.keys.indexOf(e.key),1)
                 }
@@ -221,7 +221,7 @@ window.addEventListener('load',function (){
             if(input.includes('ArrowLeft') || input.includes('ArrowRight'))
             {
                 this.game.player.setState(states.RUNNING,1)
-            } else if(input.includes('w')) this.game.player.setState(states.ROLLING,2)
+            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
         }
     }
     //состояния персонажа бежать
@@ -242,7 +242,7 @@ window.addEventListener('load',function (){
             } else if(input.includes('ArrowUp'))
             {
                 this.game.player.setState(states.JUMPING,1)
-            } else if(input.includes('w')) this.game.player.setState(states.ROLLING,2)
+            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
         }
     }
     //состояния персонажа прыжок
@@ -260,7 +260,7 @@ window.addEventListener('load',function (){
             if(this.game.player.vy > this.game.player.wait)
             {
                 this.game.player.setState(states.FALLING,1)
-            } else if(input.includes('w')) this.game.player.setState(states.ROLLING,2)
+            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
             else if(input.includes('ArrowDown')) this.game.player.setState(states.DIVING,0)
         }
     }
@@ -293,13 +293,13 @@ window.addEventListener('load',function (){
         handleInput(input){
             this.game.particles.push(new Fire(this.game,this.game.player.x+this.game.player.width*0.6,this.game.player.y+this.game.player.height*0.25))
 
-            if(!input.includes('w') && this.game.player.onGround())
+            if(!(input.includes('w') ||input.includes('ц')) && this.game.player.onGround())
             {
                 this.game.player.setState(states.RUNNING,1)
-            } else if(!input.includes('w') && !this.game.player.onGround())
+            } else if(!(input.includes('w') ||input.includes('ц')) && !this.game.player.onGround())
             {
                 this.game.player.setState(states.FALLING, 1)
-            }else if(input.includes('w') && input.includes('ArrowUp') && this.game.player.onGround())
+            }else if((input.includes('w') ||input.includes('ц')) && input.includes('ArrowUp') && this.game.player.onGround())
             {
                 this.game.player.vy-=20
             }  else if(input.includes('ArrowDown')&&!this.game.player.onGround()) this.game.player.setState(states.DIVING,0)
@@ -325,7 +325,7 @@ window.addEventListener('load',function (){
                 this.game.player.setState(states.RUNNING,1)
                 for(let i=0;i<30;i++)
                 this.game.particles.push(new Splash(this.game,this.game.player.x+this.game.player.width*0.5,this.game.player.y+this.game.player.height))
-            } else if(input.includes('w') && this.game.player.onGround())
+            } else if((input.includes('w') ||input.includes('ц'))&& this.game.player.onGround())
             {
                 this.game.player.setState(states.ROLLING, 2)
             }
@@ -637,11 +637,11 @@ window.addEventListener('load',function (){
     function animate(timeStamp)
     {
         document.querySelector('.btnLevel').addEventListener('click',()=>{
-            document.querySelector('#layer1').setAttribute('src',"img/level-2/layer-1.png")
-            document.querySelector('#layer2').setAttribute('src',"img/level-2/layer-2.png")
-            document.querySelector('#layer3').setAttribute('src',"img/level-2/layer-3.png")
-            document.querySelector('#layer4').setAttribute('src',"img/level-2/layer-4.png")
-            document.querySelector('#layer5').setAttribute('src',"img/level-2/layer-5.png")
+            document.querySelector('#layer1').setAttribute('src',"img/level-2/layer-12.png")
+            document.querySelector('#layer2').setAttribute('src',"img/level-2/layer-22.png")
+            document.querySelector('#layer3').setAttribute('src',"img/level-2/layer-32.png")
+            document.querySelector('#layer4').setAttribute('src',"img/level-2/layer-42.png")
+            document.querySelector('#layer5').setAttribute('src',"img/level-2/layer-52.png")
             game=new Game(canvas.width,canvas.height)
         })
 
