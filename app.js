@@ -2,6 +2,7 @@
 window.addEventListener('load',function (){
     const canvas = document.querySelector("#canvas1")
     const ctx = canvas.getContext('2d')
+    let currLevel=2
     canvas.width=1000
     canvas.height=500
 
@@ -28,6 +29,7 @@ window.addEventListener('load',function (){
             this.fontColor='black'
             this.player.currentState=this.player.states[0]
             this.player.currentState.enter()
+            this.gameOver=false
         }
         update(delTime)
         {
@@ -83,8 +85,6 @@ window.addEventListener('load',function (){
             this.game=game
             this.width=55.56
             this.height=100
-            // this.width=100
-            // this.height=91.3
             this.x=0
             this.y=this.game.heigth - this.height - this.game.groundMargin
             this.image = document.querySelector('#player')
@@ -162,6 +162,10 @@ window.addEventListener('load',function (){
                     if (this.currentState===this.states[4]||this.currentState===this.states[5])
                         this.game.score++
                     else this.setState(6,0)
+                    if(this.game.score>=10)
+                    {
+                        this.game.gameOver=true
+                    }
                 }
 
             })
@@ -619,7 +623,7 @@ window.addEventListener('load',function (){
         constructor(game) {
             this.game=game
             this.fontSize=30
-            this.fontFamily='Helvetica'
+            this.fontFamily='minecraft'
         }
         draw(context)
         {
@@ -636,21 +640,64 @@ window.addEventListener('load',function (){
     let lastTime =0
     function animate(timeStamp)
     {
-        document.querySelector('.btnLevel').addEventListener('click',()=>{
-            document.querySelector('#layer1').setAttribute('src',"img/level-2/layer-12.png")
-            document.querySelector('#layer2').setAttribute('src',"img/level-2/layer-22.png")
-            document.querySelector('#layer3').setAttribute('src',"img/level-2/layer-32.png")
-            document.querySelector('#layer4').setAttribute('src',"img/level-2/layer-42.png")
-            document.querySelector('#layer5').setAttribute('src',"img/level-2/layer-52.png")
-            game=new Game(canvas.width,canvas.height)
-        })
-
         const delTime = timeStamp - lastTime
         lastTime=timeStamp
         ctx.clearRect(0,0,canvas.width,canvas.height)
         game.update(delTime)
         game.draw(ctx)
-        requestAnimationFrame(animate)
+        if(!game.gameOver)requestAnimationFrame(animate)
+        else
+        {
+            currLevel++;
+            document.querySelector('.Ui').style.display='block'
+            curLevelProw()
+        }
     }
-    animate(1)
+
+    function curLevelProw()
+    {
+        document.querySelectorAll('.levelBlock').forEach(ell=>{
+            let num=ell.innerHTML
+            if(currLevel>=num)
+            {
+                let table = document.querySelectorAll('.level')
+                table[num-1].classList.replace('Lock',"number")
+                table[num-1].setAttribute('src',`img/UI/${num}.png`)
+                game=new Game(canvas.width,canvas.height)
+            }
+        })
+
+    }
+
+    document.querySelector('#Play').addEventListener('click',(e)=>{
+        document.querySelector('#Play').style.display='none'
+        document.querySelector('.NameGame').style.display='none'
+        curLevelProw()
+        document.querySelector('#bgLevel').style.display='block'
+        document.querySelector('.upgrade').style.display='block'
+    })
+
+    document.querySelectorAll('.levelBlock').forEach(e=>{
+        e.addEventListener('click',el=>{
+            let num=e.innerHTML
+            if(currLevel>=num)
+            {
+                document.querySelector('.Ui').style.display='none'
+                document.querySelector('#layer1').setAttribute('src',`img/level-${num}/layer-1${num}.png`)
+                document.querySelector('#layer2').setAttribute('src',`img/level-${num}/layer-2${num}.png`)
+                document.querySelector('#layer3').setAttribute('src',`img/level-${num}/layer-3${num}.png`)
+                document.querySelector('#layer4').setAttribute('src',`img/level-${num}/layer-4${num}.png`)
+                document.querySelector('#layer5').setAttribute('src',`img/level-${num}/layer-5${num}.png`)
+                game=new Game(canvas.width,canvas.height)
+                animate(1)
+            }
+        })
+    })
+
+    document.querySelector('.upgrade').addEventListener('click',()=>{
+        document.querySelector('#table').style.display='none'
+        document.querySelector('#tableUpgrade').style.display='block'
+        document.querySelector('.spell').style.display='block'
+        document.querySelector('#levelSelect').setAttribute('src','img/UI/header2.png')
+    })
 })

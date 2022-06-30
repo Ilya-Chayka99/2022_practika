@@ -1,0 +1,8 @@
+@font-face {
+    font-family: "minecraft";
+    font-weight: 400;
+    src: url(./minecraft-evenings-2.ttf) format("ttf"),
+    url(./minecraft-evenings-2.woff) format("woff"),
+    url(./minecraft-evenings-2.woff2) format("woff2"),
+    url(./minecraft-evenings-2.eot) format("eot");
+}

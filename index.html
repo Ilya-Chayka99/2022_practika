@@ -7,18 +7,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Js game</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./css/Fonts.css">
 </head>
 <body>
     <canvas id="canvas1"></canvas>
     
     <img id="player" src="img/player.png">
+    <h1 class="NameGame">Sand Ghost</h1>
 
-
-    <img id="layer1" src="img/level-1/layer-1.png">
-    <img id="layer2" src="img/level-1/layer-2.png">
-    <img id="layer3" src="img/level-1/layer-3.png">
-    <img id="layer4" src="img/level-1/layer-4.png">
-    <img id="layer5" src="img/level-1/layer-5.png">
+    <img id="layer1" src="img/level-1/layer-11.png">
+    <img id="layer2" src="img/level-1/layer-21.png">
+    <img id="layer3" src="img/level-1/layer-31.png">
+    <img id="layer4" src="img/level-1/layer-41.png">
+    <img id="layer5" src="img/level-1/layer-51.png">
     <img id="Enemy_fly" src="img/Enemy/level-1/enemy_fly.png">
     <img id="Enemy_plant" src="img/Enemy/level-1/enemy_plant.png">
     <img id="Enemy_spider" src="img/Enemy/level-1/enemy_spider_big.png">
@@ -28,14 +29,64 @@
 
     <img id="dr" src="img/dr.png">
     <img id="dr2" src="img/dr2.png">
+    <div class="Ui">
+        <img id="UIBa" src="img/UI/bg.png">
+        <img id="Play" src="img/UI/play.png">
+        <div id="bgLevel">
+            <img id="bgL" src="img/UI/bgl.png">
+            <img id="levelSelect" src="img/UI/header.png">
+            <div id="table">
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l1" src="img/UI/lock.png">
+                    <span class="levelBlock">1</span>
+                </div>
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l2" src="img/UI/lock.png">
+                    <span class="levelBlock">2</span>
+                </div>
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l3" src="img/UI/lock.png">
+                    <span class="levelBlock">3</span>
+                </div>
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l4" src="img/UI/lock.png">
+                    <span class="levelBlock">4</span>
+                </div>
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l5" src="img/UI/lock.png">
+                    <span class="levelBlock">5</span>
+                </div>
+                <div class="table">
+                    <img class="table1" src="img/UI/table2.png">
+                    <img class="Lock level" id="l6" src="img/UI/lock.png">
+                    <span class="levelBlock">6</span>
+                </div>
+
+
+            </div>
+            <div id="tableUpgrade">
+              <div class="spell">
+                  <img src="./img/UI/dot.png">
+                  <h2>Способность-"Колесо огня". Данная способность активируется нажатием клавиши "w", потребляет на 0
+                      уровне 30 энергии в секунду. При улудшении способности уменьшает расход энергии и увеличивает скорость игрока.</h2>
+              </div>
+            </div>
+        </div>
+        <div class="upgrade">
+            <img src="img/UI/luck.png">
+        </div>
+    </div>
+
 
     <div class="PlayerKey">
         <span class="ArrowUp"><img src="img/pngwing.com.png"><span></span></span>
         <div class="num1"> <img src="img/key-1.png" ><samp></samp></div>
-
-
     </div>
-<button class="btnLevel">!!!!!!!!!!!!!!!!!!!!!!!!!!!</button>
     <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
