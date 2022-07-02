@@ -187,7 +187,7 @@ window.addEventListener('load',function (){
                         if(this.game.lives===0) this.game.gameOver=true
                     }
 
-                    if(this.game.score>=10)
+                    if(this.game.score>=100)
                     {
                         this.game.gameOver=true
                     }
@@ -869,6 +869,4 @@ document.querySelector('.close').addEventListener('click',()=>{
             LevelCurr=+localStorage.getItem('LevelCurr')
         }
     }
-
-
 })
