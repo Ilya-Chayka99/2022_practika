@@ -1,11 +1,22 @@
 
 window.addEventListener('load',function (){
+
     const canvas = document.querySelector("#canvas1")
     const ctx = canvas.getContext('2d')
-    let currLevel=2
+    let currLevel=1
+    let spell1Up=0
+    let maxSpell1Up=4
+    let spell2Up=0
+    let maxSpell2Up=4
+    let maxPower=400
+    let power=maxPower
+    let money=100
+    let maxLevel=2
+    let LevelCurr=1
+    let boolUp=false
     canvas.width=1000
     canvas.height=500
-
+    localStore()
 //класс игры
     class Game
     {
@@ -30,6 +41,7 @@ window.addEventListener('load',function (){
             this.player.currentState=this.player.states[0]
             this.player.currentState.enter()
             this.gameOver=false
+            this.lives=5+spell2Up
         }
         update(delTime)
         {
@@ -37,6 +49,10 @@ window.addEventListener('load',function (){
             this.player.update(this.input.keys,delTime)
             if(this.enemyTimer>this.enemyUnterval)
             {
+                if(this.player.currentState.state==='ROLLING' && power>=(50-spell1Up*5))
+                    power-=50-spell1Up*5
+                else if(this.player.currentState.state==='ROLLING') this.player.setState(states.DIVING,0)
+                if(power<maxPower) power+=10
                 this.addEnemy()
                 this.enemyTimer=0
             } else this.enemyTimer+=delTime
@@ -53,6 +69,8 @@ window.addEventListener('load',function (){
                 col.update(delTime)
                 if(col.matkedForDeletion) this.collisions.splice(i,1)
             })
+
+
 
         }
         draw(context)
@@ -160,8 +178,15 @@ window.addEventListener('load',function (){
                     enemy.markedForDeletion=true
                     this.game.collisions.push(new CollisionAnimation(this.game,enemy.x+enemy.width*0.5,enemy.y+enemy.height*0.5))
                     if (this.currentState===this.states[4]||this.currentState===this.states[5])
+                    {
                         this.game.score++
-                    else this.setState(6,0)
+                    }
+                    else{
+                        this.setState(6,0)
+                        this.game.lives--
+                        if(this.game.lives===0) this.game.gameOver=true
+                    }
+
                     if(this.game.score>=10)
                     {
                         this.game.gameOver=true
@@ -210,6 +235,7 @@ window.addEventListener('load',function (){
             this.state = state
             this.game=game
         }
+
     }
 //состояния персонажа сидеть
     class Sitting extends State{
@@ -225,7 +251,7 @@ window.addEventListener('load',function (){
             if(input.includes('ArrowLeft') || input.includes('ArrowRight'))
             {
                 this.game.player.setState(states.RUNNING,1)
-            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
+            } else if((input.includes('w')||input.includes ('ц'))&& power>=(50-spell1Up*5)) this.game.player.setState(states.ROLLING,2+spell1Up*0.5)
         }
     }
     //состояния персонажа бежать
@@ -246,7 +272,7 @@ window.addEventListener('load',function (){
             } else if(input.includes('ArrowUp'))
             {
                 this.game.player.setState(states.JUMPING,1)
-            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
+            } else if((input.includes('w')||input.includes ('ц'))&& power>=(50-spell1Up*5)) this.game.player.setState(states.ROLLING,2+spell1Up*0.5)
         }
     }
     //состояния персонажа прыжок
@@ -264,7 +290,7 @@ window.addEventListener('load',function (){
             if(this.game.player.vy > this.game.player.wait)
             {
                 this.game.player.setState(states.FALLING,1)
-            } else if(input.includes('w')||input.includes('ц')) this.game.player.setState(states.ROLLING,2)
+            } else if((input.includes('w')||input.includes ('ц'))&& power>=(50-spell1Up*5)) this.game.player.setState(states.ROLLING,2+spell1Up*0.5)
             else if(input.includes('ArrowDown')) this.game.player.setState(states.DIVING,0)
         }
     }
@@ -293,6 +319,7 @@ window.addEventListener('load',function (){
             this.game.player.frameX=0
             this.game.player.maxFrame=10
             this.game.player.frameY=4
+            power-=50-spell1Up*5
         }
         handleInput(input){
             this.game.particles.push(new Fire(this.game,this.game.player.x+this.game.player.width*0.6,this.game.player.y+this.game.player.height*0.25))
@@ -329,9 +356,9 @@ window.addEventListener('load',function (){
                 this.game.player.setState(states.RUNNING,1)
                 for(let i=0;i<30;i++)
                 this.game.particles.push(new Splash(this.game,this.game.player.x+this.game.player.width*0.5,this.game.player.y+this.game.player.height))
-            } else if((input.includes('w') ||input.includes('ц'))&& this.game.player.onGround())
+            } else if((input.includes('w') ||input.includes('ц')) && this.game.player.onGround() && power>=(50-spell1Up*5))
             {
-                this.game.player.setState(states.ROLLING, 2)
+                this.game.player.setState(states.ROLLING, 2+spell1Up*0.5)
             }
 
         }
@@ -624,13 +651,53 @@ window.addEventListener('load',function (){
             this.game=game
             this.fontSize=30
             this.fontFamily='minecraft'
+            this.liveImage=document.querySelector('#live')
         }
         draw(context)
         {
             context.font=this.fontSize+'px '+this.fontFamily
             context.textAlign='left'
             context.fillStyle=this.game.fontColor
-            context.fillText('Score: '+this.game.score,20,50)
+            context.fillText('Score: '+this.game.score+' / 100',20,50)
+            for(let i=0;i<this.game.lives;i++)
+                context.drawImage(this.liveImage,20*i+20,65,25,25)
+            context.beginPath()
+            context.moveTo(this.game.width-40,30)
+            context.lineTo(this.game.width-40-maxPower-20,30)
+            context.strokeStyle='black'
+            context.lineWidth='4'
+            context.lineTo(this.game.width-40-maxPower+26,50)
+            context.lineTo(this.game.width-40,50)
+            context.lineTo(this.game.width-40,29)
+            context.closePath()
+            context.stroke()
+            context.beginPath()
+            context.moveTo(this.game.width-44,34)
+            if(power>=30)
+            {
+                context.lineTo(this.game.width-44-(power)+1,34)
+                context.lineTo(this.game.width-44-(power)+30,46)
+            }else
+            {
+                context.lineTo(this.game.width-44-(power),34)
+                context.lineTo(this.game.width-44,46)
+            }
+
+            context.lineTo(this.game.width-44,46)
+            context.lineTo(this.game.width-44,34)
+            if(power<=100){
+                context.fillStyle='red'
+                context.strokeStyle='red'
+            }
+            else {
+                context.fillStyle='orange'
+                context.strokeStyle='orange'
+            }
+            context.fill()
+            context.closePath()
+            context.stroke()
+
+
         }
     }
 
@@ -648,11 +715,35 @@ window.addEventListener('load',function (){
         if(!game.gameOver)requestAnimationFrame(animate)
         else
         {
-            currLevel++;
+            money+=game.score
+            if(game.lives>0)
+            {
+                if((currLevel+1)<=maxLevel && LevelCurr===currLevel)
+                    currLevel++;
+                document.querySelector('.bg').style.display='block'
+                document.querySelector('.bg h2').innerHTML='Уровень пройден!!!'
+                document.querySelector('.bg h3').innerHTML=`Ваши очки: ${game.score}`
+                document.querySelector('.close').style.display='block'
+            } else
+            {
+                document.querySelector('.bg').style.display='block'
+                document.querySelector('.bg h2').innerHTML='Уровень не пройден!!! =('
+                document.querySelector('.bg h3').innerHTML=`Ваши очки: ${game.score}`
+                document.querySelector('.close').style.display='block'
+            }
+            localStorage.setItem('money',money)
+            localStorage.setItem('currLevel',currLevel)
+            localStorage.setItem('spell1Up',spell1Up)
+            localStorage.setItem('spell2Up',spell2Up)
+            localStorage.setItem('LevelCurr',LevelCurr)
             document.querySelector('.Ui').style.display='block'
             curLevelProw()
         }
     }
+document.querySelector('.close').addEventListener('click',()=>{
+    document.querySelector('.bg').style.display='none'
+    document.querySelector('.close').style.display='none'
+})
 
     function curLevelProw()
     {
@@ -663,6 +754,7 @@ window.addEventListener('load',function (){
                 let table = document.querySelectorAll('.level')
                 table[num-1].classList.replace('Lock',"number")
                 table[num-1].setAttribute('src',`img/UI/${num}.png`)
+                power=maxPower
                 game=new Game(canvas.width,canvas.height)
             }
         })
@@ -675,6 +767,14 @@ window.addEventListener('load',function (){
         curLevelProw()
         document.querySelector('#bgLevel').style.display='block'
         document.querySelector('.upgrade').style.display='block'
+        let k=0.1
+        setTimeout(()=>{
+            setInterval(()=>{
+                document.querySelector('#bgLevel').style.opacity=k
+                document.querySelector('.upgrade').style.opacity=k
+                k+=0.01
+            },1)
+        },100)
     })
 
     document.querySelectorAll('.levelBlock').forEach(e=>{
@@ -682,6 +782,7 @@ window.addEventListener('load',function (){
             let num=e.innerHTML
             if(currLevel>=num)
             {
+                LevelCurr=+num
                 document.querySelector('.Ui').style.display='none'
                 document.querySelector('#layer1').setAttribute('src',`img/level-${num}/layer-1${num}.png`)
                 document.querySelector('#layer2').setAttribute('src',`img/level-${num}/layer-2${num}.png`)
@@ -695,9 +796,79 @@ window.addEventListener('load',function (){
     })
 
     document.querySelector('.upgrade').addEventListener('click',()=>{
-        document.querySelector('#table').style.display='none'
-        document.querySelector('#tableUpgrade').style.display='block'
-        document.querySelector('.spell').style.display='block'
-        document.querySelector('#levelSelect').setAttribute('src','img/UI/header2.png')
+        if(boolUp)
+        {
+            boolUp=false
+            document.querySelector('#table').style.display='flex'
+            document.querySelector('#tableUpgrade').style.display='none'
+            document.querySelector('#levelSelect').setAttribute('src','img/UI/header.png')
+        }
+        else
+        {
+            boolUp=true
+            document.querySelector('#money').innerHTML=`Всего Монет: ${money}`
+            document.querySelector('#table').style.display='none'
+            document.querySelector('#tableUpgrade').style.display='flex'
+            document.querySelector('#levelSelect').setAttribute('src','img/UI/header2.png')
+            printLevelUp(1)
+            printLevelUp(2)
+        }
+
     })
+    function printLevelUp(num)
+    {
+        if(num===1)
+        {
+            let up = document.querySelectorAll('.up1')
+            up.forEach((e,i)=>{
+                if(i<spell1Up) e.setAttribute('src','./img/UI/b.png')
+            })
+        }
+        else
+        {
+            let up = document.querySelectorAll('.up2')
+            up.forEach((e,i)=>{
+                if(i<spell2Up) e.setAttribute('src','./img/UI/b.png')
+            })
+        }
+
+    }
+    document.querySelector('.up-1').addEventListener('click',()=>{
+        if(spell1Up<maxSpell1Up && money>=200) {
+            spell1Up++
+            money-=200
+        }
+        printLevelUp(1)
+    })
+    document.querySelector('.up-2').addEventListener('click',()=>{
+        if(spell2Up<maxSpell2Up && money>=200) {
+            spell2Up++
+            money-=200
+        }
+        printLevelUp(2)
+    })
+
+
+    function localStore()
+    {
+
+        if(localStorage.length===0)
+        {
+            localStorage.setItem('money',money)
+            localStorage.setItem('currLevel',currLevel)
+            localStorage.setItem('spell1Up',spell1Up)
+            localStorage.setItem('spell2Up',spell2Up)
+            localStorage.setItem('LevelCurr',LevelCurr)
+
+        } else
+        {
+            money=+localStorage.getItem('money')
+            currLevel=+localStorage.getItem('currLevel')
+            spell1Up=+localStorage.getItem('spell1Up')
+            spell2Up=+localStorage.getItem('spell2Up')
+            LevelCurr=+localStorage.getItem('LevelCurr')
+        }
+    }
+
+
 })
